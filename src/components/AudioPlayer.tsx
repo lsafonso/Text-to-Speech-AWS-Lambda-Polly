@@ -189,6 +189,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
             </button>
           </div>
         </div>
+    </div>
   );
 };
 
