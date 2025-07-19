@@ -5,18 +5,8 @@ import VoiceSelector from './components/VoiceSelector';
 import SpeechControls from './components/SpeechControls';
 import AudioPlayer from './components/AudioPlayer';
 import LoadingSpinner from './components/LoadingSpinner';
-import { convertTextToSpeech, getAvailableVoices, TTSApiError } from './utils/api';
-import type { Voice, TTSRequest, AudioPlayerState } from './types';
-
-// Demo voices for development
-const DEMO_VOICES: Voice[] = [
-  { id: 'Joanna', name: 'Joanna', gender: 'Female', language: 'English (US)', languageCode: 'en-US' },
-  { id: 'Matthew', name: 'Matthew', gender: 'Male', language: 'English (US)', languageCode: 'en-US' },
-  { id: 'Amy', name: 'Amy', gender: 'Female', language: 'English (UK)', languageCode: 'en-GB' },
-  { id: 'Brian', name: 'Brian', gender: 'Male', language: 'English (UK)', languageCode: 'en-GB' },
-  { id: 'Céline', name: 'Céline', gender: 'Female', language: 'French', languageCode: 'fr-FR' },
-  { id: 'Mathieu', name: 'Mathieu', gender: 'Male', language: 'French', languageCode: 'fr-FR' },
-];
+import { convertTextToSpeech, getAvailableVoices, TTSApiError, cleanupAudioUrl } from './utils/api';
+import type { Voice, LambdaTTSRequest, AudioPlayerState } from './types';
 
 function App() {
   const [text, setText] = useState('');
@@ -24,7 +14,7 @@ function App() {
   const [speechRate, setSpeechRate] = useState(1.0);
   const [pitch, setPitch] = useState(0);
   const [engine, setEngine] = useState<'standard' | 'neural'>('standard');
-  const [voices, setVoices] = useState<Voice[]>(DEMO_VOICES);
+  const [voices, setVoices] = useState<Voice[]>([]);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,8 +31,8 @@ function App() {
       const availableVoices = await getAvailableVoices();
       setVoices(availableVoices);
     } catch (err) {
-      console.warn('Failed to load voices from API, using demo voices:', err);
-      // Continue with demo voices
+      console.error('Failed to load voices:', err);
+      setError('Failed to load available voices. Please check your configuration.');
     } finally {
       setLoadingVoices(false);
     }
@@ -63,7 +53,7 @@ function App() {
     setError(null);
     setSuccess(null);
 
-    const request: TTSRequest = {
+    const request: LambdaTTSRequest = {
       text: text.trim(),
       voiceId: selectedVoice,
       engine,
@@ -74,6 +64,12 @@ function App() {
 
     try {
       const response = await convertTextToSpeech(request);
+      
+      // Clean up previous audio URL to prevent memory leaks
+      if (audioUrl) {
+        cleanupAudioUrl(audioUrl);
+      }
+      
       setAudioUrl(response.audioUrl);
       setSuccess('Audio generated successfully!');
       
@@ -90,6 +86,15 @@ function App() {
       setIsGenerating(false);
     }
   };
+
+  // Cleanup audio URL on component unmount
+  useEffect(() => {
+    return () => {
+      if (audioUrl) {
+        cleanupAudioUrl(audioUrl);
+      }
+    };
+  }, []);
 
   const handleAudioStateChange = (state: AudioPlayerState) => {
     // Handle audio state changes if needed
@@ -247,7 +252,7 @@ function App() {
 
           {/* Footer */}
           <div className="text-center mt-16 text-slate-500 text-sm">
-            <p>Powered by AWS Polly • Maximum 3,000 characters per request</p>
+            <p>Powered by AWS Lambda & Polly • Maximum 3,000 characters per request</p>
           </div>
         </div>
     </div>

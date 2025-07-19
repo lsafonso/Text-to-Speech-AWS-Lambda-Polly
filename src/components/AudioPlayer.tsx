@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Play, Pause, Download, Volume2, RotateCcw } from 'lucide-react';
+import { cleanupAudioUrl } from '../utils/api';
 import type { AudioPlayerState } from '../types';
 
 interface AudioPlayerProps {
@@ -19,6 +20,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    // Reset audio state when URL changes
+    setState(prev => ({ ...prev, currentTime: 0, isPlaying: false }));
 
     const updateTime = () => {
       setState(prev => ({ ...prev, currentTime: audio.currentTime }));
@@ -40,6 +44,15 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnded);
+    };
+  }, [audioUrl]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioUrl) {
+        cleanupAudioUrl(audioUrl);
+      }
     };
   }, [audioUrl]);
 
@@ -93,12 +106,17 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
   const downloadAudio = () => {
     if (!audioUrl) return;
 
-    const link = document.createElement('a');
-    link.href = audioUrl;
-    link.download = `tts-audio-${Date.now()}.mp3`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const link = document.createElement('a');
+      link.href = audioUrl;
+      link.download = `tts-audio-${Date.now()}.mp3`;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
   };
 
   const formatTime = (time: number): string => {

@@ -6,7 +6,7 @@ export interface Voice {
   languageCode: string;
 }
 
-export interface TTSRequest {
+export interface LambdaTTSRequest {
   text: string;
   voiceId: string;
   engine?: 'standard' | 'neural';
@@ -17,10 +17,11 @@ export interface TTSRequest {
   pitch?: string;
 }
 
-export interface TTSResponse {
+export interface LambdaTTSResponse {
   audioUrl: string;
   contentType: string;
   requestId: string;
+  audioData?: ArrayBuffer;
 }
 
 export interface AudioPlayerState {
