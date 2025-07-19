@@ -109,153 +109,153 @@ function App() {
       <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gradient-radial from-indigo-100/25 to-transparent rounded-full blur-3xl"></div>
       
       <div className="relative z-10">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl shadow-lg">
-              <Volume2 className="w-8 h-8 text-white" />
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="p-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl shadow-lg">
+                <Volume2 className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                Text to Speech
+              </h1>
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              Text to Speech
-            </h1>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Transform your text into natural-sounding speech using AWS Polly's advanced AI voices.
+              Perfect for content creation, accessibility, and more.
+            </p>
           </div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Transform your text into natural-sounding speech using AWS Polly's advanced AI voices.
-            Perfect for content creation, accessibility, and more.
-          </p>
-        </div>
 
-        {/* Alert Messages */}
-        {(error || success) && (
-          <div className="mb-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-red-800 font-medium">Error</p>
-                  <p className="text-red-700 text-sm mt-1">{error}</p>
+          {/* Alert Messages */}
+          {(error || success) && (
+            <div className="mb-6">
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-red-800 font-medium">Error</p>
+                    <p className="text-red-700 text-sm mt-1">{error}</p>
+                  </div>
+                  <button
+                    onClick={clearMessages}
+                    className="text-red-400 hover:text-red-600 transition-colors"
+                  >
+                    ×
+                  </button>
                 </div>
-                <button
-                  onClick={clearMessages}
-                  className="text-red-400 hover:text-red-600 transition-colors"
-                >
-                  ×
-                </button>
-              </div>
-            )}
-            {success && (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-green-800 font-medium">Success</p>
-                  <p className="text-green-700 text-sm mt-1">{success}</p>
+              )}
+              {success && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-green-800 font-medium">Success</p>
+                    <p className="text-green-700 text-sm mt-1">{success}</p>
+                  </div>
+                  <button
+                    onClick={clearMessages}
+                    className="text-green-400 hover:text-green-600 transition-colors"
+                  >
+                    ×
+                  </button>
                 </div>
+              )}
+            </div>
+          )}
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left Column - Input and Controls */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Text Input */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <TextInput
+                  value={text}
+                  onChange={setText}
+                  error={error && text.length > 3000 ? error : undefined}
+                />
+              </div>
+
+              {/* Voice Selection */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <VoiceSelector
+                  voices={voices}
+                  selectedVoice={selectedVoice}
+                  onVoiceChange={setSelectedVoice}
+                  loading={loadingVoices}
+                />
+              </div>
+
+              {/* Speech Controls */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <SpeechControls
+                  speechRate={speechRate}
+                  onSpeechRateChange={setSpeechRate}
+                  pitch={pitch}
+                  onPitchChange={setPitch}
+                  engine={engine}
+                  onEngineChange={setEngine}
+                />
+              </div>
+            </div>
+
+            {/* Right Column - Generation and Playback */}
+            <div className="space-y-6">
+              {/* Generate Button */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <button
-                  onClick={clearMessages}
-                  className="text-green-400 hover:text-green-600 transition-colors"
+                  onClick={handleGenerate}
+                  disabled={isGenerating || !text.trim() || text.length > 3000}
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:from-gray-400 disabled:to-gray-400 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                 >
-                  ×
+                  {isGenerating ? (
+                    <>
+                      <LoadingSpinner size="sm" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="w-5 h-5" />
+                      Generate Speech
+                    </>
+                  )}
                 </button>
+
+                <div className="mt-4 text-center text-sm text-gray-500">
+                  <p>Characters: {text.length.toLocaleString()}/3,000</p>
+                  {text.trim() && (
+                    <p className="mt-1">
+                      Estimated cost: ~$0.{Math.ceil(text.length / 100).toString().padStart(2, '0')}
+                    </p>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        )}
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Input and Controls */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Text Input */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <TextInput
-                value={text}
-                onChange={setText}
-                error={error && text.length > 3000 ? error : undefined}
-              />
-            </div>
+              {/* Audio Player */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Audio Player</h3>
+                <AudioPlayer
+                  audioUrl={audioUrl}
+                  onStateChange={handleAudioStateChange}
+                />
+              </div>
 
-            {/* Voice Selection */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <VoiceSelector
-                voices={voices}
-                selectedVoice={selectedVoice}
-                onVoiceChange={setSelectedVoice}
-                loading={loadingVoices}
-              />
-            </div>
-
-            {/* Speech Controls */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <SpeechControls
-                speechRate={speechRate}
-                onSpeechRateChange={setSpeechRate}
-                pitch={pitch}
-                onPitchChange={setPitch}
-                engine={engine}
-                onEngineChange={setEngine}
-              />
-            </div>
-          </div>
-
-          {/* Right Column - Generation and Playback */}
-          <div className="space-y-6">
-            {/* Generate Button */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <button
-                onClick={handleGenerate}
-                disabled={isGenerating || !text.trim() || text.length > 3000}
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:from-gray-400 disabled:to-gray-400 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-              >
-                {isGenerating ? (
-                  <>
-                    <LoadingSpinner size="sm" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Wand2 className="w-5 h-5" />
-                    Generate Speech
-                  </>
-                )}
-              </button>
-
-              <div className="mt-4 text-center text-sm text-gray-500">
-                <p>Characters: {text.length.toLocaleString()}/3,000</p>
-                {text.trim() && (
-                  <p className="mt-1">
-                    Estimated cost: ~$0.{Math.ceil(text.length / 100).toString().padStart(2, '0')}
-                  </p>
-                )}
+              {/* Usage Information */}
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-100">
+                <h3 className="text-sm font-semibold text-gray-800 mb-3">💡 Pro Tips</h3>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li>• Use Neural engine for more natural speech</li>
+                  <li>• Adjust speech rate for better comprehension</li>
+                  <li>• Try different voices for varied content</li>
+                  <li>• Use SSML tags for advanced control</li>
+                </ul>
               </div>
             </div>
+          </div>
 
-            {/* Audio Player */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Audio Player</h3>
-              <AudioPlayer
-                audioUrl={audioUrl}
-                onStateChange={handleAudioStateChange}
-              />
-            </div>
-
-            {/* Usage Information */}
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-100">
-              <h3 className="text-sm font-semibold text-gray-800 mb-3">💡 Pro Tips</h3>
-              <ul className="text-sm text-gray-600 space-y-2">
-                <li>• Use Neural engine for more natural speech</li>
-                <li>• Adjust speech rate for better comprehension</li>
-                <li>• Try different voices for varied content</li>
-                <li>• Use SSML tags for advanced control</li>
-              </ul>
-            </div>
+          {/* Footer */}
+          <div className="text-center mt-12 text-gray-500 text-sm">
+            <p>Powered by AWS Polly • Maximum 3,000 characters per request</p>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="text-center mt-12 text-gray-500 text-sm">
-          <p>Powered by AWS Polly • Maximum 3,000 characters per request</p>
-        </div>
-      </div>
       </div>
     </div>
   );
