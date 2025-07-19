@@ -1,5 +1,5 @@
 // AWS Lambda API configuration
-const API_GATEWAY_URL = import.meta.env.VITE_AWS_API_GATEWAY_URL;
+const API_GATEWAY_URL = import.meta.env.VITE_TTS_API_URL;
 
 export class TTSApiError extends Error {
   constructor(message: string, public status?: number) {
@@ -27,7 +27,7 @@ export interface LambdaTTSResponse {
 
 export async function convertTextToSpeech(request: LambdaTTSRequest): Promise<LambdaTTSResponse> {
   if (!API_GATEWAY_URL) {
-    throw new TTSApiError('API Gateway URL not configured. Please set VITE_AWS_API_GATEWAY_URL in your environment variables.');
+    throw new TTSApiError('TTS API URL not configured. Please set VITE_TTS_API_URL in your environment variables.');
   }
 
   try {
