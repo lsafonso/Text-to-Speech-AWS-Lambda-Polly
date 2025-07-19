@@ -204,8 +204,7 @@ Create production environment files:
 **.env.production:**
 
 ```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_production_anon_key
+VITE_TTS_API_URL=https://your-api-gateway-id.execute-api.region.amazonaws.com
 ```
 
 ### 2. Build Optimization

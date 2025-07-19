@@ -7,31 +7,22 @@ The Text-to-Speech API is implemented using Supabase Edge Functions and provides
 ## Base URL
 
 ```
-https://your-project.supabase.co/functions/v1
-```
-
-## Authentication
-
-All API requests require authentication using the Supabase anon key:
-
-```http
-Authorization: Bearer YOUR_SUPABASE_ANON_KEY
+https://your-api-gateway-id.execute-api.region.amazonaws.com
 ```
 
 ## Endpoints
 
 ### 1. Generate Speech
 
-Convert text to speech using AWS Polly.
+Convert text to speech using AWS Lambda and Polly.
 
-**Endpoint:** `POST /text-to-speech`
+**Endpoint:** `POST /synthesize`
 
 #### Request
 
 ```http
-POST /text-to-speech
+POST /synthesize
 Content-Type: application/json
-Authorization: Bearer YOUR_SUPABASE_ANON_KEY
 
 {
   "text": "Hello, this is a test of the text-to-speech system.",
@@ -74,15 +65,6 @@ Authorization: Bearer YOUR_SUPABASE_ANON_KEY
 }
 ```
 
-**Error (500 Internal Server Error):**
-
-```json
-{
-  "error": "Failed to generate speech. Please check your AWS configuration and try again.",
-  "details": "AWS credentials not configured"
-}
-```
-
 #### Response Fields
 
 | Field | Type | Description |
@@ -90,59 +72,6 @@ Authorization: Bearer YOUR_SUPABASE_ANON_KEY
 | `audioUrl` | string | URL to the generated audio file |
 | `contentType` | string | MIME type of the audio file |
 | `requestId` | string | Unique identifier for the request |
-
-### 2. List Available Voices
-
-Retrieve all available AWS Polly voices.
-
-**Endpoint:** `GET /text-to-speech/voices`
-
-#### Request
-
-```http
-GET /text-to-speech/voices
-Authorization: Bearer YOUR_SUPABASE_ANON_KEY
-```
-
-#### Response
-
-**Success (200 OK):**
-
-```json
-[
-  {
-    "id": "Joanna",
-    "name": "Joanna",
-    "gender": "Female",
-    "language": "English (US)",
-    "languageCode": "en-US"
-  },
-  {
-    "id": "Matthew",
-    "name": "Matthew",
-    "gender": "Male",
-    "language": "English (US)",
-    "languageCode": "en-US"
-  },
-  {
-    "id": "Amy",
-    "name": "Amy",
-    "gender": "Female",
-    "language": "English (UK)",
-    "languageCode": "en-GB"
-  }
-]
-```
-
-#### Voice Object Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique voice identifier for AWS Polly |
-| `name` | string | Human-readable voice name |
-| `gender` | string | Voice gender: "Male" or "Female" |
-| `language` | string | Human-readable language name |
-| `languageCode` | string | ISO language code (e.g., "en-US") |
 
 ## Error Handling
 
@@ -166,9 +95,8 @@ All error responses follow this structure:
 | 400 | `TEXT_TOO_LONG` | Text exceeds 3,000 character limit |
 | 400 | `INVALID_VOICE` | Voice ID is not valid |
 | 400 | `INVALID_PARAMETERS` | Request parameters are invalid |
-| 401 | `UNAUTHORIZED` | Missing or invalid authorization |
 | 429 | `RATE_LIMIT_EXCEEDED` | Too many requests |
-| 500 | `AWS_ERROR` | AWS Polly service error |
+| 500 | `AWS_ERROR` | AWS Lambda/Polly service error |
 | 500 | `INTERNAL_ERROR` | Unexpected server error |
 
 ## Rate Limiting
@@ -185,8 +113,8 @@ The API supports Cross-Origin Resource Sharing (CORS) with the following configu
 
 ```http
 Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: GET, POST, OPTIONS
-Access-Control-Allow-Headers: authorization, x-client-info, apikey, content-type
+Access-Control-Allow-Methods: POST, OPTIONS
+Access-Control-Allow-Headers: content-type
 ```
 
 ## Usage Examples
@@ -196,11 +124,10 @@ Access-Control-Allow-Headers: authorization, x-client-info, apikey, content-type
 ```typescript
 // Generate speech
 const generateSpeech = async (text: string, voiceId: string) => {
-  const response = await fetch(`${SUPABASE_URL}/functions/v1/text-to-speech`, {
+  const response = await fetch(`${import.meta.env.VITE_TTS_API_URL}/synthesize`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
     },
     body: JSON.stringify({
       text,
@@ -216,35 +143,19 @@ const generateSpeech = async (text: string, voiceId: string) => {
 
   return await response.json();
 };
-
-// Get voices
-const getVoices = async () => {
-  const response = await fetch(`${SUPABASE_URL}/functions/v1/text-to-speech/voices`, {
-    headers: {
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    },
-  });
-
-  return await response.json();
-};
 ```
 
 ### cURL
 
 ```bash
 # Generate speech
-curl -X POST "https://your-project.supabase.co/functions/v1/text-to-speech" \
+curl -X POST "https://your-api-gateway-id.execute-api.region.amazonaws.com/synthesize" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_SUPABASE_ANON_KEY" \
   -d '{
     "text": "Hello world",
     "voiceId": "Joanna",
     "engine": "neural"
   }'
-
-# Get voices
-curl -X GET "https://your-project.supabase.co/functions/v1/text-to-speech/voices" \
-  -H "Authorization: Bearer YOUR_SUPABASE_ANON_KEY"
 ```
 
 ### Python
@@ -254,17 +165,15 @@ import requests
 import json
 
 # Configuration
-SUPABASE_URL = "https://your-project.supabase.co"
-SUPABASE_ANON_KEY = "your_anon_key"
+API_URL = "https://your-api-gateway-id.execute-api.region.amazonaws.com"
 
 headers = {
     "Content-Type": "application/json",
-    "Authorization": f"Bearer {SUPABASE_ANON_KEY}"
 }
 
 # Generate speech
 def generate_speech(text, voice_id):
-    url = f"{SUPABASE_URL}/functions/v1/text-to-speech"
+    url = f"{API_URL}/synthesize"
     data = {
         "text": text,
         "voiceId": voice_id,
@@ -272,13 +181,6 @@ def generate_speech(text, voice_id):
     }
     
     response = requests.post(url, headers=headers, json=data)
-    response.raise_for_status()
-    return response.json()
-
-# Get voices
-def get_voices():
-    url = f"{SUPABASE_URL}/functions/v1/text-to-speech/voices"
-    response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
 ```
@@ -324,17 +226,17 @@ const validateInput = (text: string, voiceId: string) => {
 
 ### 3. Caching
 
-Cache voice lists to reduce API calls:
+Cache voice lists locally:
 
 ```typescript
 let cachedVoices: Voice[] | null = null;
 
-const getVoicesWithCache = async () => {
+const getVoicesWithCache = () => {
   if (cachedVoices) {
     return cachedVoices;
   }
   
-  cachedVoices = await getVoices();
+  cachedVoices = getAvailableVoices(); // Local voice list
   return cachedVoices;
 };
 ```

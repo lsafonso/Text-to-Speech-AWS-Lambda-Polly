@@ -50,7 +50,7 @@ A beautiful, production-ready React TypeScript application that converts text to
    
    Update `.env` with your AWS API Gateway URL:
    ```env
-   VITE_TTS_API_URL=https://56j25k9zmd.execute-api.eu-north-1.amazonaws.com
+   VITE_TTS_API_URL=https://your-api-gateway-url.execute-api.region.amazonaws.com
    ```
 
 3. **Start development server:**

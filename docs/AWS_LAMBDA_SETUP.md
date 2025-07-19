@@ -246,7 +246,7 @@ exports.handler = async (event, context) => {
 
 Your API Gateway URL will be:
 ```
-https://56j25k9zmd.execute-api.eu-north-1.amazonaws.com
+https://your-api-gateway-id.execute-api.region.amazonaws.com
 ```
 
 ## Step 4: Test the Setup
@@ -268,7 +268,7 @@ Use curl to test the endpoint:
 
 ```bash
 curl -X POST \
-  https://56j25k9zmd.execute-api.eu-north-1.amazonaws.com/synthesize \
+  https://your-api-gateway-id.execute-api.region.amazonaws.com/synthesize \
   -H 'Content-Type: application/json' \
   -d '{
     "text": "Hello, this is a test of the text to speech system.",
@@ -283,7 +283,7 @@ curl -X POST \
 Update your frontend `.env` file:
 
 ```env
-VITE_TTS_API_URL=https://56j25k9zmd.execute-api.eu-north-1.amazonaws.com
+VITE_TTS_API_URL=https://your-api-gateway-id.execute-api.region.amazonaws.com
 ```
 
 ## Advanced Configuration

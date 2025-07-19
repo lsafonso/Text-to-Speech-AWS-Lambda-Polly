@@ -1,5 +1,11 @@
 // AWS Lambda API configuration
-const API_GATEWAY_URL = import.meta.env.VITE_TTS_API_URL;
+const getApiUrl = () => {
+  const url = import.meta.env.VITE_TTS_API_URL;
+  if (!url) {
+    throw new TTSApiError('TTS API URL not configured. Please set VITE_TTS_API_URL environment variable.');
+  }
+  return url;
+};
 
 export class TTSApiError extends Error {
   constructor(message: string, public status?: number) {
@@ -26,12 +32,10 @@ export interface LambdaTTSResponse {
 }
 
 export async function convertTextToSpeech(request: LambdaTTSRequest): Promise<LambdaTTSResponse> {
-  if (!API_GATEWAY_URL) {
-    throw new TTSApiError('TTS API URL not configured. Please set VITE_TTS_API_URL in your environment variables.');
-  }
+  const apiUrl = getApiUrl();
 
   try {
-    const response = await fetch(`${API_GATEWAY_URL}/synthesize`, {
+    const response = await fetch(`${apiUrl}/synthesize`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +88,7 @@ export async function convertTextToSpeech(request: LambdaTTSRequest): Promise<La
     }
     
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new TTSApiError('Network error. Please check your internet connection and API Gateway URL.');
+      throw new TTSApiError('Network error. Please check your internet connection and VITE_TTS_API_URL configuration.');
     }
     
     throw new TTSApiError('Failed to convert text to speech. Please try again.');
