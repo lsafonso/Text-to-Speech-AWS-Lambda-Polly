@@ -1,6 +1,9 @@
 # Text-to-Speech Converter with AWS Lambda
 
 A beautiful, production-ready React TypeScript application that converts text to speech using AWS Lambda and Amazon Polly. The frontend communicates directly with AWS API Gateway endpoints for seamless speech synthesis.
+## Preview
+<img width="1315" height="912" alt="image" src="https://github.com/user-attachments/assets/dfe7461a-d23e-4a3b-884f-19f6ecc1ca5a" />
+
 
 ## Features
 
@@ -14,8 +17,10 @@ A beautiful, production-ready React TypeScript application that converts text to
 - 🔄 **Streaming Audio** - Handles streamed MP3 responses from Lambda functions
 
 ## Architecture
-
+Version 1 (old design)
+![image](https://github.com/user-attachments/assets/05b825d1-c0a8-4849-a030-9243882ac769)
 ```
+Version 2 (new design)
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   React App     │───▶│  AWS API Gateway │───▶│  AWS Lambda     │
 │   (Frontend)    │    │   (/synthesize)  │    │   Function      │
@@ -26,6 +31,7 @@ A beautiful, production-ready React TypeScript application that converts text to
                                                │   AWS Polly     │
                                                │ (TTS Service)   │
                                                └─────────────────┘
+
 ```
 
 ## Setup
@@ -224,7 +230,7 @@ npm run preview
 
 ## Cost Considerations
 
-AWS Polly pricing (as of 2024):
+AWS Polly pricing:
 - **Standard voices**: $4.00 per 1 million characters
 - **Neural voices**: $16.00 per 1 million characters
 - **Free tier**: 5 million characters per month for first 12 months
