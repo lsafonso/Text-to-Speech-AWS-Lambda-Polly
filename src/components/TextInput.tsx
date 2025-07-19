@@ -22,7 +22,7 @@ const TextInput: React.FC<TextInputProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
+      <label className="block text-sm font-medium text-slate-900 flex items-center gap-2">
         <FileText className="w-4 h-4" />
         Text to Convert
       </label>
@@ -35,8 +35,8 @@ const TextInput: React.FC<TextInputProps> = ({
           rows={6}
           className={`w-full px-4 py-3 border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
             error || isOverLimit
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-500'
+              ? 'border-red-300 focus:border-red-600 focus:ring-red-500'
+              : 'border-gray-300 focus:border-slate-900 focus:ring-slate-900'
           }`}
         />
         
@@ -44,10 +44,10 @@ const TextInput: React.FC<TextInputProps> = ({
         <div className="absolute bottom-3 right-3">
           <span className={`text-xs px-2 py-1 rounded-full ${
             isOverLimit
-              ? 'bg-red-100 text-red-700'
+              ? 'bg-red-100 text-red-800'
               : isNearLimit
-              ? 'bg-yellow-100 text-yellow-700'
-              : 'bg-gray-100 text-gray-600'
+              ? 'bg-yellow-100 text-yellow-800'
+              : 'bg-gray-100 text-slate-600'
           }`}>
             {charactersUsed.toLocaleString()}/{maxLength.toLocaleString()}
           </span>
@@ -56,7 +56,7 @@ const TextInput: React.FC<TextInputProps> = ({
 
       {/* Error Message */}
       {(error || isOverLimit) && (
-        <div className="flex items-center gap-2 text-red-600 text-sm">
+        <div className="flex items-center gap-2 text-red-700 text-sm">
           <AlertCircle className="w-4 h-4" />
           <span>{error || `Text exceeds maximum length of ${maxLength.toLocaleString()} characters`}</span>
         </div>
@@ -64,7 +64,7 @@ const TextInput: React.FC<TextInputProps> = ({
 
       {/* Character Limit Warning */}
       {isNearLimit && !isOverLimit && !error && (
-        <div className="flex items-center gap-2 text-yellow-600 text-sm">
+        <div className="flex items-center gap-2 text-yellow-700 text-sm">
           <AlertCircle className="w-4 h-4" />
           <span>Approaching character limit</span>
         </div>

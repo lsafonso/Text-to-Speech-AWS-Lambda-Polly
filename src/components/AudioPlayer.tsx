@@ -110,23 +110,22 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
 
   if (!audioUrl) {
     return (
-      <div className="bg-gray-50 rounded-xl p-6 text-center">
-        <div className="text-gray-400 mb-2">
+      <div className="bg-slate-50 rounded-lg p-6 text-center">
+        <div className="text-slate-400 mb-2">
           <Volume2 className="w-8 h-8 mx-auto" />
         </div>
-        <p className="text-gray-500 text-sm">Generate audio to see player controls</p>
+        <p className="text-slate-500 text-sm">Generate audio to see player controls</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+    <div className="space-y-4">
       <audio ref={audioRef} src={audioUrl} preload="metadata" />
       
-      <div className="space-y-4">
         {/* Progress Bar */}
         <div className="space-y-2">
-          <div className="flex justify-between text-xs text-gray-500">
+          <div className="flex justify-between text-xs text-slate-500">
             <span>{formatTime(state.currentTime)}</span>
             <span>{formatTime(state.duration)}</span>
           </div>
@@ -138,7 +137,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
             onChange={handleSeek}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
             style={{
-              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(state.currentTime / state.duration) * 100}%, #e5e7eb ${(state.currentTime / state.duration) * 100}%, #e5e7eb 100%)`
+              background: `linear-gradient(to right, #0f172a 0%, #0f172a ${(state.currentTime / state.duration) * 100}%, #e5e7eb ${(state.currentTime / state.duration) * 100}%, #e5e7eb 100%)`
             }}
           />
         </div>
@@ -148,7 +147,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
           <div className="flex items-center gap-3">
             <button
               onClick={togglePlay}
-              className="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="flex items-center justify-center w-12 h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
             >
               {state.isPlaying ? (
                 <Pause className="w-5 h-5" />
@@ -159,7 +158,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
 
             <button
               onClick={restart}
-              className="flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-all duration-200"
+              className="flex items-center justify-center w-10 h-10 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-all duration-200"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -168,7 +167,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
           <div className="flex items-center gap-4">
             {/* Volume Control */}
             <div className="flex items-center gap-2">
-              <Volume2 className="w-4 h-4 text-gray-500" />
+              <Volume2 className="w-4 h-4 text-slate-500" />
               <input
                 type="range"
                 min={0}
@@ -183,15 +182,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onStateChange }) =>
             {/* Download Button */}
             <button
               onClick={downloadAudio}
-              className="flex items-center justify-center w-10 h-10 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-all duration-200"
+              className="flex items-center justify-center w-10 h-10 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-all duration-200"
               title="Download Audio"
             >
               <Download className="w-4 h-4" />
             </button>
           </div>
         </div>
-      </div>
-    </div>
   );
 };
 
