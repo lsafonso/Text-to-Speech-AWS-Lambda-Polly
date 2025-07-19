@@ -1,6 +1,6 @@
 # Text-to-Speech Converter with AWS Lambda
 
-A beautiful, production-ready React TypeScript application that converts text to speech using AWS Lambda and Amazon Polly. The frontend communicates directly with AWS API Gateway endpoints for seamless speech synthesis.
+A beautiful, production-ready React TypeScript application that converts text to speech using AWS Lambda and Amazon Polly. The frontend communicates directly with AWS API Gateway for fast, secure, and serverless speech synthesis.
 ## Preview
 <img width="1315" height="912" alt="image" src="https://github.com/user-attachments/assets/dfe7461a-d23e-4a3b-884f-19f6ecc1ca5a" />
 
@@ -13,7 +13,6 @@ A beautiful, production-ready React TypeScript application that converts text to
 - 📱 **Responsive Design** - Beautiful UI that works on all devices
 - ⚡ **Real-time Processing** - Fast text-to-speech conversion via AWS Lambda
 - 🌍 **Multi-language Support** - Support for multiple languages and voices
-- 🎨 **Premium UI/UX** - Modern minimalist design with clean aesthetics
 - 🔄 **Streaming Audio** - Handles streamed MP3 responses from Lambda functions
 
 ## Architecture
